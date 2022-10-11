@@ -1,7 +1,7 @@
 describe('"My rated videos" page', () => {
   it('can list and update ratings status', () => {
     cy.visit('/ratings');
-    cy.focused().type("user1");
+    cy.focused().type("aidjango");
     cy.get('input[name="password"]').click().type("tournesol").type('{enter}');
 
     // All rated videos are listed.
@@ -30,7 +30,7 @@ describe('"My rated videos" page', () => {
 
   it('visit ratings page with filter in URL', () => {
     cy.visit('/ratings?isPublic=false');
-    cy.focused().type("user1");
+    cy.focused().type("aidjango");
     cy.get('input[name="password"]').click().type("tournesol").type('{enter}');
     cy.contains('button', 'Options', {matchCase: false}).click();
     cy.contains('label', 'Private', {matchCase: false}).within(
@@ -39,7 +39,7 @@ describe('"My rated videos" page', () => {
   })
   it('entities\'s thumbnails are clickable', () => {
     cy.visit('/ratings');
-    cy.focused().type("user1");
+    cy.focused().type("aidjango");
     cy.get('input[name="password"]').click().type("tournesol").type('{enter}');
 
     const thumbnail = cy.get('img.entity-thumbnail').first();
@@ -49,7 +49,7 @@ describe('"My rated videos" page', () => {
 
   it('entities\'s titles are clickable', () => {
     cy.visit('/ratings');
-    cy.focused().type("user1");
+    cy.focused().type("aidjango");
     cy.get('input[name="password"]').click().type("tournesol").type('{enter}');
 
     const videoCard = cy.get('div[data-testid=video-card-info]').first();
