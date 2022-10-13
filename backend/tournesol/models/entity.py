@@ -147,7 +147,7 @@ class Entity(models.Model):
         null=False,
         default=0,
         help_text="Total number of pairwise comparisons for this video"
-        "from certified contributors",
+                  "from certified contributors",
     )
 
     # TODO
@@ -170,7 +170,7 @@ class Entity(models.Model):
         editable=False,
         null=True,
         help_text="Indexed words used for the full-text search, that are filtered,"
-        " stemmed and weighted according to the language's search config.",
+                  " stemmed and weighted according to the language's search config.",
     )
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -201,6 +201,31 @@ class Entity(models.Model):
             .count()
         )
         self.save(update_fields=["rating_n_ratings", "rating_n_contributors"])
+
+    def update_poll_n_ratings(self, poll, tuple=None):
+        from .entity_poll_rating import EntityPollRating
+        from .comparisons import Comparison
+
+        pollRating, created = EntityPollRating.objects.get_or_create(poll=poll, entity=self)
+        n_comparisons = None
+        n_contributors = None
+        if tuple:
+            n_comparisons = tuple[0]
+            n_contributors = tuple[1]
+        else:
+            n_comparisons = Comparison.objects.filter(
+                Q(entity_1=self) | Q(entity_2=self)
+            ).count()
+            n_contributors = (
+                Comparison.objects.filter(Q(entity_1=self) | Q(entity_2=self))
+                .distinct("user")
+                .count()
+            )
+
+        pollRating.n_comparisons = n_comparisons
+        pollRating.n_contributors = n_contributors
+
+        pollRating.save(update_fields=["n_comparisons", "n_contributors"])
 
     def auto_remove_from_rate_later(self, poll, user) -> None:
         """
